@@ -15,7 +15,7 @@ import {
   AppSettings
 } from '../types/nutrition';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_URL as string) || '/api';
 
 export const apiClient = axios.create({
   baseURL: API_BASE,
@@ -213,11 +213,11 @@ export const api = {
   },
 
   downloadCSV: (type: 'nutrition' | 'weight' | 'liquid') => {
-    window.open(`/api/reports/export?type=${type}`, '_blank');
+    window.open(`${API_BASE}/reports/export?type=${type}`, '_blank');
   },
 
   downloadBackup: () => {
-    window.open('/api/reports/export?type=backup', '_blank');
+    window.open(`${API_BASE}/reports/export?type=backup`, '_blank');
   },
 
   clearAllData: async (confirmation: string) => {

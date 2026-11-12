@@ -153,6 +153,30 @@ If you prefer using Docker:
 
 ---
 
+## ☁️ Cloud Deployment (1-Click & Automated)
+
+### Option 1: 1-Click Deployment on Render.com (PostgreSQL + Backend + Frontend)
+This repository includes a [`render.yaml`](./render.yaml) blueprint that automatically provisions:
+- Free managed PostgreSQL database (`nutrition_tracker_db`)
+- Express backend Node.js Web Service (running migrations and seed automatically)
+- React Vite Static Site with SPA rewrites
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/jayansh1208/personal-nutrition-tracker)
+
+1. Click the **Deploy to Render** button above or connect your GitHub repository `jayansh1208/personal-nutrition-tracker` on [dashboard.render.com](https://dashboard.render.com).
+2. Render will automatically read `render.yaml` and deploy all three components with zero manual configuration required.
+
+---
+
+### Option 2: Frontend on Vercel + Backend on Render / Railway
+1. **Backend**: Deploy the `server/` directory on [Render](https://render.com) or [Railway](https://railway.app) with your PostgreSQL connection string.
+2. **Frontend**: Import the `client/` directory into [Vercel](https://vercel.com).
+   - Set Environment Variable: `VITE_API_URL=https://your-backend-service.onrender.com/api`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+
+---
+
 ## 🧪 Testing
 
 Integration tests verify CRUD operations, calorie and protein calculation, liquid separation, weight entries, and goals:

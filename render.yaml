@@ -1,0 +1,44 @@
+databases:
+  - name: nutrition-tracker-db
+    databaseName: nutrition_tracker
+    user: postgres
+    plan: free
+
+services:
+  # Backend API Web Service
+  - type: web
+    name: nutrition-tracker-server
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npx prisma db push && npm run prisma:seed && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nutrition-tracker-db
+          property: connectionString
+      - key: DEFAULT_TIMEZONE
+        value: Asia/Kolkata
+      - key: CLIENT_URL
+        value: "*"
+
+  # Frontend Static Site
+  - type: web
+    name: nutrition-tracker-client
+    runtime: static
+    plan: free
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: ""
