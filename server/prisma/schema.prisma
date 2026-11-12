@@ -1,0 +1,97 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum MealCategory {
+  BREAKFAST
+  LUNCH
+  EVENING_SNACK
+  DINNER
+  OTHER
+}
+
+model DailyGoals {
+  id             String   @id @default(cuid())
+  calorieTarget  Decimal  @db.Decimal(8, 2)
+  proteinTarget  Decimal  @db.Decimal(8, 2)
+  liquidTarget   Decimal  @db.Decimal(8, 2)
+  effectiveFrom  String   // Format: YYYY-MM-DD
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([effectiveFrom])
+  @@map("daily_goals")
+}
+
+model Meals {
+  id        String       @id @default(cuid())
+  date      String       // Format: YYYY-MM-DD
+  category  MealCategory
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  items     MealItems[]
+
+  @@unique([date, category])
+  @@index([date])
+  @@map("meals")
+}
+
+model MealItems {
+  id           String    @id @default(cuid())
+  mealId       String
+  meal         Meals     @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  foodName     String
+  quantity     Decimal?  @db.Decimal(8, 2)
+  quantityUnit String    @default("g")
+  calories     Decimal   @db.Decimal(8, 2)
+  protein      Decimal   @db.Decimal(8, 2)
+  notes        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([mealId])
+  @@map("meal_items")
+}
+
+model LiquidEntries {
+  id         String   @id @default(cuid())
+  drinkName  String   @default("Water")
+  quantityMl Decimal  @db.Decimal(8, 2)
+  date       String   // Format: YYYY-MM-DD
+  consumedAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([date])
+  @@map("liquid_entries")
+}
+
+model WeightEntries {
+  id         String   @id @default(cuid())
+  weightKg   Decimal  @db.Decimal(6, 2)
+  date       String   // Format: YYYY-MM-DD
+  recordedAt DateTime @default(now())
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([date])
+  @@map("weight_entries")
+}
+
+model AppSettings {
+  id                 String   @id @default(cuid())
+  timezone           String   @default("Asia/Kolkata")
+  defaultWeightUnit  String   @default("kg")
+  defaultCalorieUnit String   @default("kcal")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("app_settings")
+}
